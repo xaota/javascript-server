@@ -1,0 +1,18 @@
+{
+  "name": "javascript-server",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "javascript http server",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --experimental-modules index.js"
+  },
+  "author": "github.com/xaota",
+  "license": "ISC",
+  "dependencies": {
+
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.1"
+  }
+}

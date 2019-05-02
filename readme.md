@@ -1,7 +1,5 @@
 # javascript-server
-
-> `@node12`, `@es-module`
-
+Высокоуровневый(?) сервер для node12
 
 ## установка / instalation
 ```shell
@@ -86,7 +84,7 @@ export default {
   friends: {
     get: ({id}) => friendsInfoService.fromId(id),
     add: ({id, user}) => friendsInfoService.follow(id, user),
-    remove: (id, user) => friendsInfoService.unfollow(id, user)
+    remove: (id, user) => friendsInfoService.unfollow(id, user),
     ...
   },
   ...
@@ -134,11 +132,13 @@ $ npm start
 ### проверка
 > `http://localhost:8080` - открыть в браузере
 
-содержимое файла index.html
-> `инструменты разработчика -> console`
+содержимое файла `/htdocs/index.html`
+> `инструменты разработчика -> console` - вызовем метод `debug.api.test`
 
 ```javascript
-await fetch('/api?method=debug.api.test', {
+const request = '/api?method=debug.api.test';
+
+await fetch(request, {
   method: 'post',
   headers: {
     "Content-type": "application/json; charset=UTF-8"

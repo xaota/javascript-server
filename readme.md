@@ -4,57 +4,110 @@
 
 
 ## установка / instalation
-```bash
+```shell
 $ npm install javascript-server
 ```
 
 - [x] `Server` - сервинг / static, dynamic
 - [x] `Router` - роутинг
-- [x] `Api`    - api-config
+- [x] `Api`    - api (`http post` only)
 - [ ] `Socket` - WebSocket server
 
-
 ## настройка и использование / setting and usage
+вам понадобится `проект для node12` (es-module)
+
+```
+/api
+  index.js
+  controllers.js
+
+/service
+  ...
+
+/htdocs
+  index.html
+
+/libraries
+  ...
+
+index.js
+router.js
+package.json
+```
+
+> `package.json` - для node12 проект должен иметь тип `module`
+```json
+{
+  "type": "module",
+  "scripts": {
+    "start": "node --experimental-modules index.js"
+  },
+  ...
+}
+```
+---
+
+> `api/index.js` - config api
+```javascript
+import {Api}       from 'javascript-server';
+import controllers from './api/controllers.js';
+
+const config = {
+  method  : 'post',
+  type   : 'application/json',
+  route  : '/api',
+  require: ['version', 'method'], // http query params
+  default: {
+    version: '1.0.0'
+  }
+};
+
+export default new Api(config)
+  .version('1.0.0', controllers)
+  .handler((api, request, data) => api.call(request.version, request.method, data));
+```
+
+> `api/controllers.js` - список контроллеров api
+```javascript
+import usersInfoService from '../service/usersInfoService.js';
+import friendsInfoService from '../service/friendsInfoService.js';
+
+export default {
+  debug: { // тестовый раздел для проверки
+    api: {
+      test: ({a, b}) => a + b
+    }
+  },
+  users: {
+    all: () => usersInfoService.allUsersList(),
+    get: ({id}) => usersInfoService.fromId(id),
+    ...
+  },
+  friends: {
+    get: ({id}) => friendsInfoService.fromId(id),
+    add: ({id, user}) => friendsInfoService.follow(id, user),
+    remove: (id, user) => friendsInfoService.unfollow(id, user)
+    ...
+  },
+  ...
+}
+```
+---
+
 > `router.js` - роутинг
 ```javascript
 import {Router} from 'javascript-server';
 
 export default new Router()
-  .htdocs('/path/to/htdocs') // wwwroot folder
-  .static('/libraries', {    // other folders for static libs, dependencies, etc
-    '/components': '/',
-    '/static'    : '/'
+                                      // static routing
+  .htdocs('/htdocs')                  // wwwroot folder
+  .static('/libraries', {             // other folders for static libs, dependencies, etc
+    '/components': '/components',
+    '/static'    : '/static'
   })
-  .errors('/errors', {       // folder for http error pages
-    '404': '/path/to/404.html'
-    // ...
-  })
-  .api({                     // path for api requests
-    method: ['post'],
-    path: '/api'
-  })
-                             // dynamic routing
+                                      // dynamic routing (?)
   .get('/regex',  request => { ... })
   .post('/regex', request => { ... });
-```
----
-
-> `api.js` - config api
-```javascript
-import {Api} from 'javascript-server';
-
-export default new Api({type: 'json'})
-  .required('version', data => data.version, '0.1.0')
-  .required('method',  data => data.method && data.method.split('.'))
-  // .error(error => error);
-  .before(api.check('version'), api.check('method'))
-  .init('0.1.0', {
-    friends: {
-      get: data => {},
-      set: data => {}
-    }
-  });
-  // .after(data => data)
 ```
 ---
 
@@ -62,17 +115,43 @@ export default new Api({type: 'json'})
 ```javascript
 import {Server} from 'javascript-server';
 import router   from './router.js';
-import api      from './api.js';
+import api      from './api/index.js';
 
 const server = Server.http({host: 'localhost', port: 8080});
-
 server
   .router(router)
   .api(api)
-  .on('start', server => console.log(`started on port ${server.config.port}`)
+  .on('start', server => console.log(`server started on ${server.config.port}`)
   .start();
 ```
 ---
+
+### запуск
+```shell
+$ npm start
+```
+
+### проверка
+> `http://localhost:8080` - открыть в браузере
+
+содержимое файла index.html
+> `инструменты разработчика -> console`
+
+```javascript
+await fetch('/api?method=debug.api.test', {
+  method: 'post',
+  headers: {
+    "Content-type": "application/json; charset=UTF-8"
+  },
+  body: JSON.stringify({
+    a: 3,
+    b: 4
+  })
+})
+  .then(response => response.text())
+```
+сумма чисел `a` и `b`
+
 
 ## features
 

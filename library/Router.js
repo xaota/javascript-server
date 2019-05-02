@@ -1,6 +1,6 @@
 import url, {Url} from 'url';
 import fs from 'fs';
-import path, {basename} from 'path';
+import path from 'path';
 import {RequestError} from './error/index.js';
 
 const method = ['get', 'post'];
@@ -46,11 +46,15 @@ const mime = {
     #static = [];
 
   /** */
+    #api = null
+
+  /** */
     #index = []
 
   /** */
     exec(filepath, data, request, response) {
-      this;
+      if (filepath === this.#api) return this.controller(request, response, data);
+
       return new Promise((resolve, reject) => {
         const exist = fs.existsSync(filepath);
         const ext = path.parse(filepath).ext;
@@ -71,6 +75,11 @@ const mime = {
       });
     }
 
+  /** */
+    api(api) {
+      this.#api = api;
+      return this;
+    }
 
   /** Обработка POST запросов @todo refactoring
     * @param {object} request запрос
@@ -115,14 +124,27 @@ const mime = {
         if (fs.existsSync(htdocs)) return htdocs;
 
         const library = this.#static.filter(s => data.href.toLowerCase().indexOf(s.name) === 0).sort((a, b) => b.name.length - a.name.length)[0];
-        const relative = data.href.substr(library.name.length);
-        const statics = path.resolve(library.path, './' + relative);
-        if (fs.existsSync(statics)) return statics;
+        if (library !== undefined) {
+          const relative = data.href.substr(library.name.length);
+          const statics = path.resolve(library.path, './' + relative);
+          if (fs.existsSync(statics)) return statics;
+        }
+
+        if (this.#api !== null) {
+          const api = this.#api.config.route.toLowerCase();
+          if (data.href.toLowerCase().indexOf(api) === 0) return this.#api;
+        }
 
         return htdocs;
       } catch (error) {
         return false;
       }
+    }
+
+  /** */
+    controller(request, response, data) {
+      const api = this.#api;
+      return api.handle(request, response, data);
     }
 
   /** */

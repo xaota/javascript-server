@@ -13,9 +13,6 @@ import {RequestError, ResponseError} from './error/index.js';
       this.config = Object.assign(getDefaultServerConfig(), config);
     }
 
-  /** #api */
-    #api = null
-
   /** #router */
     #router = null
 
@@ -47,7 +44,8 @@ import {RequestError, ResponseError} from './error/index.js';
 
   /** / api */
     api(api) {
-      this.#api = api;
+      // TODO: memo
+      if (this.#router !== null) this.#router.api(api);
       return this;
     }
 

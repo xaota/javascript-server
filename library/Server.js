@@ -1,6 +1,7 @@
 import http from 'http';
 import Router from './Router.js';
-import {RequestError, ResponseError} from './error/index.js';
+import Parser from './Parser.js';
+import {ResponseError} from './error/index.js';
 
 /** {Server} Объект сервера @class
   *
@@ -147,21 +148,17 @@ import {RequestError, ResponseError} from './error/index.js';
 
   /** */
     static post(request, response, data) {
-      // console.log('post', request);
       this.event('post');
-      const content = (request.headers['content-type'] || 'text/plain').split(';')[0].toLowerCase().split('/');
-      let buffer = '';
-      request.on('data', chunk => buffer += chunk);
+      const buffers = [];
+      request.on('data', chunk => buffers.push(chunk));
       request.on('end', _ => {
         // this.event('post.end');
         try {
-          data.body = content[1] === 'json'
-            ? JSON.parse(buffer)
-            : buffer;
+          const body = new Parser(buffers);
+          data.body = body.parse(request.headers['content-type']);
         } catch (error) {
-          const temp = new RequestError('не удалось распарсить тело запроса');
-          this.error(request, response, temp);
-          return response.end(temp.message); // !
+          this.error(request, response, error);
+          return response.end(error.message); // !
         }
         this.reply(request, response, data, this.#post);
       });

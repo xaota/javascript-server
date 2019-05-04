@@ -31,9 +31,9 @@ import {Obj} from 'javascript-std-lib/index.js';
 
   /** */
     handle(request, response, data) {
-      const query = Object.assign(this.config.default, data.query);
+      const query = {...this.config.default, ...data.query};
       const result = this.#handler(this, query, data.body);
-      response.write(JSON.stringify(result));
+      response.write(JSON.stringify(result || null));
     }
 
   /** */

@@ -170,7 +170,8 @@ import {ResponseError} from './error/index.js';
       // todo: this.api
       const router = this.#router;
       const routed = router && router.find(data);
-      router && routed !== false
+      try {
+        router && routed !== false
         ? await router.exec(routed, data, request, response)
         : handlers.forEach((handler, index) => { // TODO: Promise waterflow
           try {
@@ -181,6 +182,11 @@ import {ResponseError} from './error/index.js';
             return response.end(temp.message); // !
           }
         });
+      } catch (err2) {
+        const temp = new ResponseError('ошибка при подготовке ответа: ' + err2.message);
+        this.error(request, response, temp);
+        return response.end(temp.message); // !
+      }
       this.event('response.' + data.method);
       if (!response.finished) response.end();
       // return this;

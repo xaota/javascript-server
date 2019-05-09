@@ -1,6 +1,6 @@
 {
   "name": "javascript-server",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "type": "module",
   "description": "javascript http server",
   "main": "index.js",
@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/xaota/javascript-server#readme",
   "dependencies": {
-    "javascript-std-lib": "^1.5.0"
+    "javascript-std-lib": "^1.6.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1"

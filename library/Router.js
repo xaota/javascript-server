@@ -64,7 +64,10 @@ const mime = {
 
         if (exist && type) {
           const stream = fs.createReadStream(filepath);
-          response.writeHead(200, {'Content-Type': type});
+          response.writeHead(200, {
+            'Content-Type': type,
+            'Cache-Control': 'max-age=31536000'
+          });
           stream.on('end', resolve);
           stream.pipe(response);
         } else {

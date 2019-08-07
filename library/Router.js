@@ -17,11 +17,18 @@ const mime = {
   "gif" : "image/gif",
   "svg" : "image/svg+xml",
   "icon": "image/x-icon",
-  // ico
+  "ico": "image/x-icon",
   "xml" : "text/xml",
   "csv" : "text/csv",
   "txt" : "text/plain",
-  "md"  : "text/markdown"
+  "md"  : "text/markdown",
+
+  // fonts
+  "otf"  : "font/otf",
+  "sfnt" : "font/sfnt",
+  "ttf"  : "font/ttf",
+  "woff" : "font/woff",
+  "woff2": "font/woff2"
 };
 
 /** {Router} Настройки маршрутов запросов @class

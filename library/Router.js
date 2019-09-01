@@ -73,13 +73,13 @@ const mime = {
           const stream = fs.createReadStream(filepath);
           response.writeHead(200, {
             'Content-Type': type,
-            'Cache-Control': 'max-age=31536000'
+            'Cache-Control': 'max-age=31536000' // !TODO добавить поддержку настроек кеша
           });
           stream.on('end', resolve);
           stream.pipe(response);
         } else {
-          response.writeHead(404, {'Content-Type': 'text/plain'}); // ?
-          response.write('404');
+          response.writeHead(404, {'Content-Type': 'text/plain; charset=utf-8'}); // ?
+          response.write('404', 'utf-8');
           resolve(); // reject?
         }
       });
@@ -98,20 +98,20 @@ const mime = {
     */
     post(request, response, json) {
       let data = {};
-      const mime = {'Content-Type': 'application/json'};
+      const mime = {'Content-Type': 'application/json; charset=utf-8'};
       try {
         json = JSON.parse(json);
       } catch (error) {
         data = {error: 'incorrect json data'};
         response.writeHead(400, mime);
-        response.end(JSON.stringify(data));
+        response.end(JSON.stringify(data), 'utf-8');
         return;
       }
 
       const path = this.router.path(request).toLowerCase().split('/');
       if (path.length !== 2 || path[0] !== 'api' || !this.allow.includes(path[1])) {
         response.writeHead(405, mime);
-        response.end(JSON.stringify({error: 'method not allowed'}));
+        response.end(JSON.stringify({error: 'method not allowed'}), 'utf-8');
         return;
       }
 
@@ -123,7 +123,7 @@ const mime = {
         data = {error: data.error || 406}
         response.writeHead(error.code, mime);
       } finally {
-        response.end(JSON.stringify(data));
+        response.end(JSON.stringify(data), 'utf-8');
       }
     }
 

@@ -30,17 +30,19 @@ import {Obj} from 'javascript-std-lib/index.js';
     }
 
   /** */
-    handle(request, response, data) {
+    async handle(request, response, data) {
       const query = {...this.config.default, ...data.query};
       try {
-        const result = this.#handler(this, query, data.body);
-        response.write(JSON.stringify(result || null));
+        const result = await this.#handler(this, query, data.body);
+        response.writeHead(200, {'Content-Type': 'application/json; charset=utf-8'});
+        response.write(JSON.stringify(result || null), "utf-8");
         // return result;
       } catch (e) {
-        response.writeHead(406, {'Content-Type': 'application/json'});
-        response.write(e.message);
-        response.end();
-        // throw e;
+        // response.writeHead(406, {'Content-Type': 'application/json; charset=utf-8'});
+        // console.log(123, e.message, e.type);
+        // response.write(e, "utf-8");
+        // response.end();
+        throw e;
       }
     }
 

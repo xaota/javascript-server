@@ -8,6 +8,11 @@ export default class ServerError extends Error {
     constructor(message, ...args) {
       super(message, ...args);
       this.type = ['server'];
-      console.log(this.type, message, args);
+      // console.log(this.type, message, args);
+    }
+
+  /** */
+    toString() {
+      return JSON.stringify({error: true, message: this.message, type: this.type});
     }
   }

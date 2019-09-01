@@ -30,7 +30,7 @@ const types = {
 
   /** */
     json() {
-      const body = this.body;
+      const body = this.body || null;
       return JSON.parse(body);
     }
 

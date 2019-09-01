@@ -1,5 +1,5 @@
 # javascript-server
-Высокоуровневый(?) сервер для node12
+Cервер для node12
 
 ## установка / instalation
 ```shell
@@ -60,10 +60,13 @@ const config = {
   }
 };
 
-export default new Api(config)
-  .version('1.0.0', controllers)
-  .handler((api, request, data) => api.call(request.version, request.method, data));
+export default new Api(config).version('1.0.0', controllers);
+
+// также можно изменить обработчик выбора метода апи для обработки запроса
+// например,
+// .handler((api, request, data) => api.call(request.version, request.method, data));
 ```
+
 
 > `api/controllers.js` - список контроллеров api
 ```javascript
@@ -90,6 +93,7 @@ export default {
   ...
 }
 ```
+> В папке `services` нужно создать сервисы (`usersInfoService` и `friendsInfoService`) или закоментировать строки про них
 ---
 
 > `router.js` - роутинг
@@ -136,7 +140,8 @@ $ npm start
 > `инструменты разработчика -> console` - вызовем метод `debug.api.test`
 
 ```javascript
-const request = '/api?method=debug.api.test';
+const request = '/api?debug.api.test';
+// также можно /api?method=debug.api.test
 
 await fetch(request, {
   method: 'post',
@@ -152,6 +157,7 @@ await fetch(request, {
 ```
 сумма чисел `a` и `b`
 
+> P.S. Можно, например, фронте использовать пакет [javascript-fetch-api](https://www.npmjs.com/package/javascript-fetch-api) для подобных запросов
 
 ## features
 

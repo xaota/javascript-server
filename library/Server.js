@@ -177,15 +177,17 @@ import {ResponseError} from './error/index.js';
           try {
             handler.call(this, request, response, data, index)
           } catch (error) {
+            response.writeHead(406, {'Content-Type': 'application/json; charset=utf-8'});
             const temp = new ResponseError('ошибка при подготовке ответа: ' + error.message);
             this.error(request, response, temp);
-            return response.end(temp.message); // !
+            return response.end(temp.toString(), 'utf-8'); // !
           }
         });
       } catch (err2) {
+        response.writeHead(406, {'Content-Type': 'application/json; charset=utf-8'});
         const temp = new ResponseError('ошибка при подготовке ответа: ' + err2.message);
         this.error(request, response, temp);
-        return response.end(temp.message); // !
+        return response.end(temp.toString(), 'utf-8'); // !
       }
       this.event('response.' + data.method);
       if (!response.finished) response.end();

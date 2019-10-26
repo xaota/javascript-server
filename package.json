@@ -1,6 +1,6 @@
 {
   "name": "javascript-server",
-  "version": "1.4.2",
+  "version": "1.5.2",
   "type": "module",
   "description": "javascript http server",
   "main": "index.js",
@@ -29,6 +29,7 @@
     "javascript-std-lib": "latest"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.1"
+    "eslint": "^6.6.0",
+    "babel-eslint": "^10.0.2"
   }
 }

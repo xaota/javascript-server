@@ -1,4 +1,5 @@
 import http from 'http';
+import https from 'https';
 import Router from './Router.js';
 import Parser from './Parser.js';
 import {ResponseError} from './error/index.js';
@@ -130,8 +131,10 @@ import {ResponseError} from './error/index.js';
     }
 
   /** */
-    static https(config) {
-      // TODO: https.server
+    static https(config, ssl) {
+      const server = new Server(config);
+      const initer = new https.Server(ssl, listener.bind(server));
+      return server.init(initer);
     }
 
   /** */

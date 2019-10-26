@@ -60,6 +60,7 @@ const mime = {
 
   /** */
     exec(filepath, data, request, response) {
+      // console.log(filepath, data, request.url);
       if (filepath === this.#api) return this.controller(request, response, data);
 
       return new Promise((resolve, reject) => {

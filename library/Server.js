@@ -174,6 +174,7 @@ import {ResponseError} from './error/index.js';
       const router = this.#router;
       const routed = router && router.find(data);
       try {
+        // console.log(handlers, routed, request.url);
         router && routed !== false
         ? await router.exec(routed, data, request, response)
         : handlers.forEach((handler, index) => { // TODO: Promise waterflow
@@ -187,6 +188,7 @@ import {ResponseError} from './error/index.js';
           }
         });
       } catch (err2) {
+        // console.log(request.url);
         response.writeHead(406, {'Content-Type': 'application/json; charset=utf-8'});
         const temp = new ResponseError('ошибка при подготовке ответа: ' + err2.message);
         this.error(request, response, temp);
